@@ -80,18 +80,21 @@ def main():
 
     #filter for words which contain letters at specified places
     if known_letters != "NA":
-        usable_form = [item for item in known_letters]
+        usable_form = list(known_letters)
         while len(usable_form) > 0:
-            test_words = specific_letters(test_words, usable_form[0], int(usable_form[1])-1)
+            letter = usable_form[0]
+            position = int(usable_form[1]) - 1
+            test_words = specific_letters(test_words, letter, position)
             usable_form = usable_form[2:]
 
     #fiter out words which have known incorrect placement of cut_letters
     if known_not_placed_letters != "NA":
-        list_form = [item for item in known_not_placed_letters]
+        list_form = list(known_not_placed_letters)
         while len(list_form) > 0:
-            test_words = specific_not_letters(test_words, list_form[0], int(list_form[1])-1)
+            letter = list_form[0]
+            position = int(list_form[1]) - 1
+            test_words = specific_not_letters(test_words, letter, position)
             list_form = list_form[2:]
-
 
     test_words.sort()
     test_words = [word for word in test_words if word.islower()]
