@@ -6,35 +6,27 @@ from english_words import english_words_alpha_set
 from textwrap import dedent
 import unittest
 
-def remove_letters(words, letter):
+def remove_letters(words : set, letter : str) -> set:
+    assert(len(letter) == 1)
     return [word for word in set(words) if letter not in word]
-
-class TestRemoveLetters(unittest.TestCase):
-    test_words = [ 'apple', 'bears', 'words', 'xyzzy' ]
-
-    def test_remove_letters_1(self):
-        filtered_words = remove_letters(TestRemoveLetters.test_words, 'a')
-        self.assertEqual(2, len(filtered_words))
-        self.assertNotIn('apple', filtered_words)
-        self.assertNotIn('bears', filtered_words)
-        self.assertIn('words', filtered_words)
-        self.assertIn('xyzzy', filtered_words)
-
-    def test_remove_letters_2(self):
-        filtered_words = remove_letters(TestRemoveLetters.test_words, 'q')
-        self.assertEqual(4, len(filtered_words))
-
-        for word in TestRemoveLetters.test_words:
-            self.assertIn(word, filtered_words)
-
-def include_letters(words, letter):
+    
+def include_letters(words : set, letter : str) -> set:
+    assert(len(letter) == 1)
     return [word for word in set(words) if letter in word]
 
-def specific_letters(words, letter, placement):
-    return [word for word in set(words) if word[placement] == letter]
+def specific_letters(words : set, letter : str, placement : int) -> set:
+    """
+    Return all words where 'letter' is in the 'placement'th position.
+    """
+    assert(len(letter) == 1)
+    return [word for word in words if word[placement] == letter]
 
-def specific_not_letters(words, letter, placement):
-    return [word for word in set(words) if word[placement] != letter]
+def specific_not_letters(words : set, letter : str, placement : int):
+    """
+    Return set of words which do not have 'letter' in the 'placement'th position.
+    """
+    assert(len(letter) == 1)
+    return [word for word in words if word[placement] != letter]
 
 def main():
     print("----")
