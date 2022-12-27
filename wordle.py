@@ -3,39 +3,79 @@
 # Let you know what words could solve a Wordle puzzle.
 #
 from english_words import english_words_alpha_set
-from textwrap import dedent
+from textwrap import dedent, fill
 import unittest
 
 def remove_letters(words : set, letter : str) -> set:
     assert(len(letter) == 1)
     return [word for word in set(words) if letter not in word]
     
+def remove_all_letters(words: set, letters: str) -> set:
+    if letters != "NA":
+        for letter in letters:
+            words = remove_letters(words, letter)
+
+    return words
+
 def include_letters(words : set, letter : str) -> set:
+    """
+    Return set of words, all of which have a given letter somewhere in the word.
+    """
     assert(len(letter) == 1)
     return [word for word in set(words) if letter in word]
 
-def specific_letters(words : set, letter : str, placement : int) -> set:
+def specific_letter(words : set, letter : str, placement : int) -> set:
     """
-    Return all words where 'letter' is in the 'placement'th position.
+    Return list of all words where 'letter' is in the 'placement'th position.
     """
     assert(len(letter) == 1)
     return [word for word in words if word[placement] == letter]
 
+def all_specific_letters(words: set, known_letters: str) -> set:
+    # known_letters must be pairs of a letter and a digit so the length must be even.
+    assert(len(known_letters) % 2 == 0)
+
+    if known_letters != "NA":
+        known_letters_list = list(known_letters)
+        while len(known_letters_list) >= 2:
+            letter = known_letters_list[0]
+            position = int(known_letters_list[1]) - 1
+            words = specific_letter(words, letter, position)
+            known_letters_list = known_letters_list[2:]
+
+    return words
+
+
 def specific_not_letters(words : set, letter : str, placement : int):
     """
-    Return set of words which do not have 'letter' in the 'placement'th position.
+    Return set of words which do not have 'letter' in the word but not at the 'placement'th position.
     """
     assert(len(letter) == 1)
-    return [word for word in words if word[placement] != letter]
+    return [word for word in words if letter in word and word[placement] != letter]
+
+def remove_known_not_placed_letters(words: set, known_not_placed_letters: str) -> set:
+    """
+    Remove all words from set unless they contain a letter anywhere but the specified position.  These are letters
+    we know are in the word but know they're not at a specific position.
+
+    known_not_placed_letters is a string of letter, position pairs.  The letter is known to 
+    not be at the position.
+    """
+    assert(len(known_not_placed_letters) % 2 == 0)
+
+    if known_not_placed_letters != 'NA':
+        not_placed_letters_list = list(known_not_placed_letters)
+        while len(not_placed_letters_list) >= 2:
+            letter = not_placed_letters_list[0]
+            position = int(not_placed_letters_list[1]) - 1
+            words = specific_not_letters(words, letter, position)
+            not_placed_letters_list = not_placed_letters_list[2:]
+
+    return words
 
 def main():
     print("----")
     print("Hi! Welcome to the Wordle Solver.")
-
-    five_letters = [word for word in set(english_words_alpha_set) if len(word)==5]
-    test_words = five_letters
-    #test_words = ['hello', 'hi', 'goodday', 'gretchen']
-
 
     cut_letters = input(dedent("""
                         Grey Letters
@@ -59,41 +99,24 @@ def main():
                                     for example, if we know 'r' is NOT the first letter and 'p' is NOT the fifth, input r1p5
                                     """))
 
-    #remove letters which are not in the word
-    if cut_letters != "NA":
-        for letter in cut_letters:
-            test_words = remove_letters(test_words, letter)
+    # Get starting list of five-letter English words which are not proper nouns.
+    solutions = [word for word in english_words_alpha_set if len(word) == 5 and word.islower()]
 
-    #filter for words which contain included letters somewhere
-    '''if yes_letters != "NA":
-        for letter in yes_letters:
-            test_words = include_letters(test_words, letter)
-    '''
+    # Remove words which contain letters known not to be in answer.
+    solutions = remove_all_letters(solutions, cut_letters)
 
-    #filter for words which contain letters at specified places
-    if known_letters != "NA":
-        usable_form = list(known_letters)
-        while len(usable_form) > 0:
-            letter = usable_form[0]
-            position = int(usable_form[1]) - 1
-            test_words = specific_letters(test_words, letter, position)
-            usable_form = usable_form[2:]
+    # Filter for words which contain letters at specified places
+    solutions = all_specific_letters(solutions, known_letters)
 
     #fiter out words which have known incorrect placement of cut_letters
-    if known_not_placed_letters != "NA":
-        list_form = list(known_not_placed_letters)
-        while len(list_form) > 0:
-            letter = list_form[0]
-            position = int(list_form[1]) - 1
-            test_words = specific_not_letters(test_words, letter, position)
-            list_form = list_form[2:]
+    solutions = remove_known_not_placed_letters(solutions, known_not_placed_letters)
 
-    test_words.sort()
-    test_words = [word for word in test_words if word.islower()]
-    print(f"There are {len(test_words)} options.")
-    print("your potential words are: ")
-    for item in test_words:
-        print(item)
+    solutions.sort()
+    print(f"There are {len(solutions)} options.")
+    print('')
+    print(f"Your {'first ten lines of ' if len(solutions) > 89 else ''}potential words are: ")
+    print(fill(", ".join(solutions), initial_indent="    ", subsequent_indent="    ", max_lines=10))
+
     print("Hope you enjoyed your experience with the Wordle Solver!\n")
 
 if __name__ == '__main__':
