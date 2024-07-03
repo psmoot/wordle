@@ -94,34 +94,34 @@ def main():
     cut_letters = input(
         dedent(
             """
-                        Grey Letters
-                        -----
-                        Write the letters which are eliminated, or NA if there are none.  Do not use commas or separators.
-                        """
+            Grey Letters
+            -----
+            Write the letters which are eliminated, or NA if there are none.  Do not use commas or separators.
+            """
         )
     )
 
     known_letters = input(
         dedent(
             """
-                        Green Letters
-                        ----
-                        Write the letters which we know their place in the word, or NA if we don't know any
-                        Use the format letter, placement, letter, placement;
-                        for example, if we know 't' is the first letter and 's' is the fifth, input t1f5
-                        """
+            Green Letters
+            ----
+            Write the letters which we know their place in the word, or NA if we don't know any
+            Use the format letter, placement, letter, placement;
+            for example, if we know 't' is the first letter and 's' is the fifth, input t1f5
+            """
         )
     )
 
     known_not_placed_letters = input(
         dedent(
             """
-                                    Yellow Letters
-                                    -----
-                                    Write the letters which we know where they are NOT in the word, or NA if we don't know any.
-                                    Use the format letter, placement, letter, placement;
-                                    for example, if we know 'r' is NOT the first letter and 'p' is NOT the fifth, input r1p5
-                                    """
+            Yellow Letters
+            -----
+            Write the letters which we know where they are NOT in the word, or NA if we don't know any.
+            Use the format letter, placement, letter, placement;
+            for example, if we know 'r' is NOT the first letter and 'p' is NOT the fifth, input r1p5
+            """
         )
     )
 
